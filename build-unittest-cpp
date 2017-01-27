@@ -1,0 +1,27 @@
+#!/bin/bash
+
+sourceDir=${HOME}/programs/unittest-cpp
+
+echo "Pulling update from git repository"
+cd $sourceDir
+git pull origin master --tags
+cd -
+
+buildDir=/tmp/unittest-cpp-build
+installDir=/opt/UnitTest++
+
+if [ -d $installDir ]
+then 
+    rm -rf $installDir
+fi
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -r $buildDir
+fi
+
+mkdir -v $buildDir
+cd $buildDir
+cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir && make clean \
+    && make -j24 install && rm -rf $buildDir

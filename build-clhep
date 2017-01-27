@@ -10,7 +10,7 @@ tag=`git describe --always --tag`
 cd -
 
 buildDir=/tmp/clhep-build
-installPrefix=/opt/clhep/$tag
+installDir=/opt/clhep/$tag
 
 if [ -d $installDir ]
 then 
@@ -25,7 +25,7 @@ fi
 
 mkdir -v $buildDir
 cd $buildDir
-cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installPrefix && make clean \
+cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir && make clean \
     && make -j24 install && rm -rf $buildDir
 
 echo "Updating the modulefile at " $modulefile
