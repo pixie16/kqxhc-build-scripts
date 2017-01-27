@@ -1,0 +1,20 @@
+#!/bin/bash
+
+sourceDir=${HOME}/programs/sources/geant4
+buildDir=${HOME}/sandbox/geant4-build
+installPrefix=${HOME}/programs/geant4/geant-root
+#clhepExec=
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -rv $buildDir
+fi
+
+mkdir -v $buildDir
+cd $buildDir
+cmake $sourceDir -DCMAKE_INSTALL_PREFIX=$installPrefix \
+      -DCLHEP_CONFIG_EXECUTABLE=$installPrefix/bin -DGEANT4_INSTALL_DATA=ON \
+      -DGEANT4_BUILD_CXXSTD=c++11 && make clean \
+    && make -j3 && make install && rm -rvf $buildDir
+ 

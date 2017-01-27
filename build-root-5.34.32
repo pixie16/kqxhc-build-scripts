@@ -1,0 +1,24 @@
+#!/bin/bash
+
+modulefile=/etc/modulefiles/root/5.34.32
+sourceDir=${HOME}/programs/root/5.34.32
+
+buildDir=/tmp/root-build
+installDir=/opt/root/5.34.32
+
+echo "Removing Previous Installation..."
+sudo rm -rf $installDir
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -rv $buildDir
+fi
+
+mkdir -v $buildDir
+cd $buildDir
+cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
+     -Droofit=ON -Dminuit2=ON -Dsoversion=ON -Dcxx11=ON -Dqt=ON -Dpython=ON  -DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 && make clean \
+    && make -j24
+
+make install && rm -rvf $buildDir

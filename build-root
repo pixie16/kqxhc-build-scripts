@@ -1,0 +1,33 @@
+#!/bin/bash
+
+modulefile=/etc/modulefiles/root/root-git
+sourceDir=${HOME}/programs/root/repo
+
+echo "Pulling update from git repository"
+cd $sourceDir
+git pull origin master --tags
+tag=`git describe --always --tag`
+cd -
+
+buildDir=/tmp/root-build
+installDir=/opt/root/$tag
+
+echo "Removing Previous Installation..."
+rm -rf $installDir
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -rv $buildDir
+fi
+
+mkdir -v $buildDir
+cd $buildDir
+cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
+     -Droofit=ON -Dminuit2=ON -Dsoversion=ON -Dcxx11=ON -Dqt=ON -Dpython=ON  -DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 && make clean \
+    && make -j24 install \
+    && rm -rvf $buildDir
+
+echo "Updating the modulefile at " $modulefile
+awk -v t=$tag '{if($1 == "set" && $2 == "version") print $1,$2,t; else print $0}' $modulefile > /tmp/root-git
+mv /tmp/root-git $modulefile

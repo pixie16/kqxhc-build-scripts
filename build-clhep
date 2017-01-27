@@ -1,0 +1,33 @@
+#!/bin/bash
+
+modulefile=/etc/modulefiles/clhep/clhep-git
+sourceDir=${HOME}/programs/clhep/repo
+
+echo "Pulling update from git repository"
+cd $sourceDir
+git pull origin master --tags
+tag=`git describe --always --tag`
+cd -
+
+buildDir=/tmp/clhep-build
+installPrefix=/opt/clhep/$tag
+
+if [ -d $installDir ]
+then 
+    rm -rf $installDir
+fi
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -rv $buildDir
+fi
+
+mkdir -v $buildDir
+cd $buildDir
+cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installPrefix && make clean \
+    && make -j24 install && rm -rf $buildDir
+
+echo "Updating the modulefile at " $modulefile
+awk -v t=$tag '{if($1 == "set" && $2 == "version") print $1,$2,t; else print $0}' $modulefile > /tmp/clhep-git
+mv /tmp/clhep-git $modulefile

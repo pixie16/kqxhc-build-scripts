@@ -1,0 +1,36 @@
+#!/bin/bash
+
+version=9.5.p02
+
+sourceDir=${HOME}/programs/geant4/$version
+buildDir=/tmp/build-geant4-$version
+installDir=/opt/geant4/$version
+
+if [ -d $installDir ]
+then
+   echo "Removing the previous installation"
+   rm -r $installDir
+fi
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -r $buildDir
+fi
+
+mkdir -v $buildDir
+cd $buildDir
+
+cmake $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
+    -DGEANT4_INSTALL_DATA=ON \
+    -DGEANT4_INSTALL_DATADIR=$installDir/data \
+    -DGEANT4_USE_GDML=ON \
+    -DGEANT4_USE_OPENGL_X11=ON \
+    -DGEANT4_USE_QT=ON \
+    -DGEANT4_USE_RAYTRACER_X11=ON \
+    -DGEANT4_USE_SYSTEM_EXPAT=ON \
+    -DGEANT4_USE_SYSTEM_ZLIB=ON \
+    -DGEANT4_USE_XM=ON \
+    -DGEANT4_BUILD_CXXSTD=c++11 \
+    && make -j24 install \
+    && rm -rf $buildDir

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+version=9.4.p04
+
+sourceDir=${HOME}/programs/geant4/$version
+installDir=/opt/geant4/$version
+
+if [ -d $installDir ]
+then
+   echo "Removing the previous installation"
+   rm -r $installDir
+fi
+
+mkdir $installDir
+cp -r $sourceDir/data $installDir
+
+cd $sourceDir
+pwd
+./Configure -build -s \
+    && make -j24 install \
