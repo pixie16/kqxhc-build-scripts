@@ -23,5 +23,6 @@ fi
 
 mkdir -v $buildDir
 cd $buildDir
+
 cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir && make clean \
     && make -j24 install && rm -rf $buildDir

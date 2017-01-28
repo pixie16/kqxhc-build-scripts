@@ -1,0 +1,49 @@
+#!/bin/bash
+
+modulefile=/etc/modulefiles/paass/paass
+sourceDir=${HOME}/programs/paass/
+
+echo "Pulling update from git repository"
+cd $sourceDir
+git pull origin release-candidate --tags
+tag=`git describe --always --tag`
+cd -
+
+installDir=/opt/paass/$tag
+buildDir=/tmp/paass-build
+
+if [ -d $installDir ]
+then
+   echo "Removing the previous installation"
+   rm -r $installDir
+fi
+
+if [ -d $buildDir ]
+then
+    echo "Removing previous build"
+    rm -r $buildDir
+fi
+
+mkdir $buildDir
+cd $buildDir
+
+module load root
+
+cmake3 $sourceDir \
+    -DCMAKE_INSTALL_PREFIX=$installDir \
+    -DBUILD_SCOPE=ON \
+    -DBUILD_SETUP=OFF \
+    -DBUILD_SHARED_LIBS=ON \
+    -DBUILD_SKELETON=ON \
+    -DBUILD_SUITE=OFF \
+    -DBUILD_TESTS=ON \
+    -DBUILD_UNITTESTS=ON \
+    -DBUILD_UTKSCAN=ON \
+    -DUSE_GSL=ON \
+    -DUSE_ROOT=ON \
+    && make -j24 install \
+    && rm -rf $buildDir
+
+echo "Copying module file to the proper place"
+cp -v $installDir/share/modulefiles/pixieSuite $modulefile
+

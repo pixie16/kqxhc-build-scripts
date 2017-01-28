@@ -20,11 +20,12 @@ fi
 if [ -d $buildDir ]
 then
     echo "Removing previous build"
-    rm -rv $buildDir
+    rm -r $buildDir
 fi
 
-mkdir -v $buildDir
+mkdir $buildDir
 cd $buildDir
+
 cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir && make clean \
     && make -j24 install && rm -rf $buildDir
 

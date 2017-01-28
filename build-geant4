@@ -1,20 +1,46 @@
 #!/bin/bash
 
-sourceDir=${HOME}/programs/sources/geant4
-buildDir=${HOME}/sandbox/geant4-build
-installPrefix=${HOME}/programs/geant4/geant-root
-#clhepExec=
+modulefile=/etc/modulefiles/geant4/geant4-git
+sourceDir=${HOME}/programs/geant4/repo
+
+echo "Pulling update from git repository"
+cd $sourceDir
+git pull origin master --tags
+tag=`git describe --always --tag`
+cd -
+
+buildDir=/tmp/geant4-build
+installDir=/opt/geant4/$tag
+
+if [ -d $installDir ]
+then 
+    rm -rf $installDir
+fi
 
 if [ -d $buildDir ]
 then
     echo "Removing previous build"
-    rm -rv $buildDir
+    rm -r $buildDir
 fi
 
-mkdir -v $buildDir
+mkdir $buildDir
 cd $buildDir
-cmake $sourceDir -DCMAKE_INSTALL_PREFIX=$installPrefix \
-      -DCLHEP_CONFIG_EXECUTABLE=$installPrefix/bin -DGEANT4_INSTALL_DATA=ON \
-      -DGEANT4_BUILD_CXXSTD=c++11 && make clean \
-    && make -j3 && make install && rm -rvf $buildDir
- 
+
+cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
+      -DGEANT4_INSTALL_DATA=ON \
+      -DGEANT4_INSTALL_DATADIR=$installDir/data \
+      -DGEANT4_USE_GDML=ON \
+      -DGEANT4_USE_OPENGL_X11=ON \
+      -DGEANT4_USE_QT=ON \
+      -DGEANT4_USE_RAYTRACER_X11=ON \
+      -DGEANT4_USE_SYSTEM_EXPAT=ON \
+      -DGEANT4_USE_SYSTEM_ZLIB=ON \
+      -DGEANT4_USE_XM=ON \
+      -DGEANT4_BUILD_CXXSTD=c++11 \
+      && make -j24 install \
+      && rm -rf $buildDir 
+
+echo "Updating the modulefile at " $modulefile
+awk -v t=$tag '{if($1 == "set" && $2 == "version") print $1,$2,t; else print $0}' $modulefile > /tmp/clhep-git
+mv /tmp/clhep-git $modulefile
+echo "You should ensure that the data paths in the modulefile are accurate!"

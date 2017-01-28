@@ -18,15 +18,23 @@ rm -rf $installDir
 if [ -d $buildDir ]
 then
     echo "Removing previous build"
-    rm -rv $buildDir
+    rm -r $buildDir
 fi
 
-mkdir -v $buildDir
+mkdir $buildDir
 cd $buildDir
-cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
-     -Droofit=ON -Dminuit2=ON -Dsoversion=ON -Dcxx11=ON -Dqt=ON -Dpython=ON  -DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 && make clean \
+
+cmake3 $sourceDir \
+    -DCMAKE_INSTALL_PREFIX=$installDir \
+    -Droofit=ON \
+    -Dminuit2=ON \
+    -Dsoversion=ON \
+    -Dcxx11=ON \
+    -Dqt=ON \
+    -Dpython=ON \
+    -DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 \
     && make -j24 install \
-    && rm -rvf $buildDir
+    && rm -rf $buildDir
 
 echo "Updating the modulefile at " $modulefile
 awk -v t=$tag '{if($1 == "set" && $2 == "version") print $1,$2,t; else print $0}' $modulefile > /tmp/root-git

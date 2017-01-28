@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=10.01.p02
+version=10.1.2
 
 sourceDir=${HOME}/programs/geant4/$version
 buildDir=/tmp/build-geant4-$version
@@ -32,7 +32,5 @@ cmake $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
       -DGEANT4_USE_SYSTEM_ZLIB=ON \
       -DGEANT4_USE_XM=ON \
       -DGEANT4_BUILD_CXXSTD=c++11 \
-      && make -j24 \
-      && make install \
-      && rm -rvf $buildDir
- 
+      && make -j24 install \
+      && rm -rf $buildDir
