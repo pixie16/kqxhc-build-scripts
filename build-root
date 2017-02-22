@@ -32,7 +32,6 @@ cmake3 $sourceDir \
     -Dcxx11=ON \
     -Dqt=ON \
     -Dpython=ON \
-    -DCMAKE_CXX_FLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 \
     && make -j24 install \
     && rm -rf $buildDir
 

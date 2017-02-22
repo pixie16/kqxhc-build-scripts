@@ -27,20 +27,22 @@ mkdir $buildDir
 cd $buildDir
 
 cmake3 $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
-      -DGEANT4_INSTALL_DATA=ON \
-      -DGEANT4_INSTALL_DATADIR=$installDir/data \
-      -DGEANT4_USE_GDML=ON \
-      -DGEANT4_USE_OPENGL_X11=ON \
-      -DGEANT4_USE_QT=ON \
-      -DGEANT4_USE_RAYTRACER_X11=ON \
-      -DGEANT4_USE_SYSTEM_EXPAT=ON \
-      -DGEANT4_USE_SYSTEM_ZLIB=ON \
-      -DGEANT4_USE_XM=ON \
-      -DGEANT4_BUILD_CXXSTD=c++11 \
-      && make -j24 install \
-      && rm -rf $buildDir 
+    -DGEANT4_BUILD_MULTITHREADED=ON \
+    -DGEANT4_INSTALL_DATA=ON \
+    -DGEANT4_INSTALL_DATADIR=$installDir/data \
+    -DGEANT4_USE_GDML=ON \
+    -DGEANT4_USE_OPENGL_X11=ON \
+    -DGEANT4_USE_QT=ON \
+    -DGEANT4_USE_RAYTRACER_X11=ON \
+    -DGEANT4_USE_SYSTEM_CLHEP=OFF \
+    -DGEANT4_USE_SYSTEM_EXPAT=OFF \
+    -DGEANT4_USE_SYSTEM_ZLIB=OFF \
+    -DGEANT4_USE_XM=ON \
+    -DGEANT4_BUILD_CXXSTD=c++11 \
+    && make -j24 install \
+    && rm -rf $buildDir 
 
 echo "Updating the modulefile at " $modulefile
-awk -v t=$tag '{if($1 == "set" && $2 == "version") print $1,$2,t; else print $0}' $modulefile > /tmp/clhep-git
-mv /tmp/clhep-git $modulefile
+awk -v t=$tag '{if($1 == "set" && $2 == "version") print $1,$2,t; else print $0}' $modulefile > /tmp/geant4-git
+mv /tmp/geant4-git $modulefile
 echo "You should ensure that the data paths in the modulefile are accurate!"

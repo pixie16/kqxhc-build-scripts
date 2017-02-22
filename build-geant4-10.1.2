@@ -22,15 +22,17 @@ mkdir -v $buildDir
 cd $buildDir
 
 cmake $sourceDir -DCMAKE_INSTALL_PREFIX=$installDir \
-      -DGEANT4_INSTALL_DATA=ON \
-      -DGEANT4_INSTALL_DATADIR=$installDir/data \
-      -DGEANT4_USE_GDML=ON \
-      -DGEANT4_USE_OPENGL_X11=ON \
-      -DGEANT4_USE_QT=ON \
-      -DGEANT4_USE_RAYTRACER_X11=ON \
-      -DGEANT4_USE_SYSTEM_EXPAT=ON \
-      -DGEANT4_USE_SYSTEM_ZLIB=ON \
-      -DGEANT4_USE_XM=ON \
-      -DGEANT4_BUILD_CXXSTD=c++11 \
-      && make -j24 install \
-      && rm -rf $buildDir
+    -DGEANT4_BUILD_MULTITHREADED=ON \
+    -DGEANT4_INSTALL_DATA=ON \
+    -DGEANT4_INSTALL_DATADIR=$installDir/data \
+    -DGEANT4_USE_GDML=ON \
+    -DGEANT4_USE_OPENGL_X11=ON \
+    -DGEANT4_USE_QT=ON \
+    -DGEANT4_USE_RAYTRACER_X11=ON \
+    -DGEANT4_USE_SYSTEM_CLHEP=OFF \
+    -DGEANT4_USE_SYSTEM_EXPAT=OFF \
+    -DGEANT4_USE_SYSTEM_ZLIB=OFF \
+    -DGEANT4_USE_XM=ON \
+    -DGEANT4_BUILD_CXXSTD=c++11 \
+    && make -j24 install \
+    && rm -rf $buildDir
